@@ -17,8 +17,15 @@ values ('CHAIR_01', false, 'NO_FINGER')
 on conflict (device_id) do nothing;
 
 -- ----------------------------------------------------------------------------
--- Promote an admin AFTER you have signed that account up through the web app:
+-- Promote an admin AFTER you have signed that account up through the web app.
+-- This upsert also creates the profile row if it's missing and returns the row
+-- so you can confirm it matched (run in the SQL editor, which bypasses RLS):
 --
---   update public.profiles set role = 'admin' where email = 'you@example.com';
+--   insert into public.profiles (id, email, role)
+--   select id, email, 'admin'
+--   from auth.users
+--   where email = 'you@example.com'
+--   on conflict (id) do update set role = 'admin'
+--   returning id, email, role;
 --
 -- ----------------------------------------------------------------------------

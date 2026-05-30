@@ -87,11 +87,23 @@ git pull origin main
    - **Project URL** and **anon public** key → paste into `js/supabase-config.js`.
    - **service_role** key → paste into the ESP32 `secrets.h` (never in the browser).
 5. **Make yourself an admin:** sign up through the web app once, then run in the
-   SQL editor:
+   SQL editor (this also creates the profile row if it's missing, and the
+   `returning` clause confirms it matched — you should see **1 row**):
 
    ```sql
-   update public.profiles set role = 'admin' where email = 'you@example.com';
+   insert into public.profiles (id, email, role)
+   select id, email, 'admin'
+   from auth.users
+   where email = 'you@example.com'
+   on conflict (id) do update set role = 'admin'
+   returning id, email, role;
    ```
+
+   > A plain `update public.profiles set role = 'admin' where email = '…'` works
+   > too, but reports "No rows returned" even on success (UPDATE returns no result
+   > set) and does nothing if the profile row doesn't exist yet — the upsert above
+   > avoids both pitfalls. Note: the SQL editor bypasses RLS, so policies don't
+   > block this.
 
 ### Data model (replaces the old Firebase Realtime Database tree)
 
