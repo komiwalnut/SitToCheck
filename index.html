@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sit to Check — Smart Health Monitoring</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+<div id="fbBanner" role="status" aria-live="polite"></div>
+
+<div id="loader" aria-label="Loading application">
+  <div class="spinner"></div>
+  <p style="color:#E03C31;margin-top:16px;font-size:13px;font-weight:600;letter-spacing:0.08em;">SIT TO CHECK</p>
+</div>
+
+<!-- AUTH PAGE -->
+<div id="authPage">
+  <div class="w-full max-w-sm mx-auto" style="margin-top:10vh;">
+    <div style="text-align:center;margin-bottom:8px;">
+      <img src="assets/logo.png" alt="Sit to Check Logo"
+           style="width:90px;height:90px;object-fit:contain;margin:0 auto;display:block;
+                  border-radius:50%;border:2px solid #D5D9E0;">
+    </div>
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:24px;font-weight:700;color:#1A1D21;letter-spacing:-0.5px;">Sit to Check</div>
+      <p style="color:#9CA3AF;font-size:13px;margin-top:4px;">Smart Health Monitoring Chair</p>
+    </div>
+    <div class="glass" style="padding:28px;">
+      <div id="loginBox">
+        <p style="color:#9CA3AF;font-size:11px;text-align:center;margin-bottom:16px;letter-spacing:0.07em;text-transform:uppercase;">Sign In</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <input id="loginEmail"    type="email"    class="auth-input" placeholder="Email address"   autocomplete="email" />
+          <input id="loginPassword" type="password" class="auth-input" placeholder="Password"        autocomplete="current-password" />
+        </div>
+        <p id="authMsg" style="color:#C0352A;font-size:12px;min-height:18px;margin:10px 0 0;"></p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+          <button id="loginBtn"  class="btn-primary">Sign In</button>
+          <button id="goSignup"  class="btn-secondary">Create New Account</button>
+        </div>
+        <div style="text-align:center;margin-top:14px;">
+          <button id="goForgot" style="background:none;border:none;cursor:pointer;color:#E03C31;font-size:12px;font-weight:500;text-decoration:underline;text-underline-offset:3px;padding:0;">Forgot password?</button>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD BOX -->
+      <div id="forgotBox" class="hidden">
+        <p style="color:#9CA3AF;font-size:11px;text-align:center;margin-bottom:10px;letter-spacing:0.07em;text-transform:uppercase;">Reset Password</p>
+        <p style="color:#4B5563;font-size:13px;text-align:center;margin-bottom:16px;">Enter your email and we'll send you a reset link.</p>
+        <input id="forgotEmail" type="email" class="auth-input" placeholder="Email address" autocomplete="email" />
+        <p id="forgotMsg" style="font-size:12px;min-height:18px;margin:10px 0 0;color:#C0352A;"></p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+          <button id="forgotBtn" class="btn-primary">Send Reset Link</button>
+          <button id="backFromForgot" class="btn-secondary">Back to Sign In</button>
+        </div>
+      </div>
+
+      <div id="signupBox" class="hidden">
+        <p style="color:#9CA3AF;font-size:11px;text-align:center;margin-bottom:16px;letter-spacing:0.07em;text-transform:uppercase;">Create Account</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <input id="signupFirst"    type="text"     class="auth-input" placeholder="First name" />
+            <input id="signupLast"     type="text"     class="auth-input" placeholder="Last name"  />
+          </div>
+          <input id="signupAge"      type="number"   class="auth-input" placeholder="Age" min="1" max="120" />
+          <input id="signupEmail"    type="email"    class="auth-input" placeholder="Email address" autocomplete="email" />
+          <input id="signupPassword" type="password" class="auth-input" placeholder="Password (min 6 chars)" autocomplete="new-password" />
+          <label class="consent-row">
+            <input id="consentCheck" type="checkbox" />
+            <span>I understand this system is for monitoring and research only, not medical diagnosis.</span>
+          </label>
+        </div>
+        <p id="signupMsg" style="font-size:12px;min-height:18px;margin:10px 0 0;color:#C0352A;"></p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+          <button id="signupBtn" class="btn-primary">Create Account</button>
+          <button id="backLogin" class="btn-secondary">Back to Sign In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+
+  <nav id="sidebar" aria-label="Main navigation">
+    <div id="sidebarTop">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="assets/logo.png" alt="Sit to Check Logo"
+             style="width:34px;height:34px;object-fit:contain;border-radius:50%;
+                    border:1.5px solid #D5D9E0;flex-shrink:0;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1A1D21;letter-spacing:-0.3px;">Sit to Check</div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:2px;">Health Monitoring</div>
+        </div>
+      </div>
+      <button id="hamburgerBtn" aria-label="Toggle navigation">&#9776;</button>
+    </div>
+
+    <hr class="divider" style="margin-top:14px;">
+
+    <div id="sidebarNav" style="flex-direction:column;gap:4px;flex:1;">
+      <button id="navDash"    class="nav-btn active">Dashboard</button>
+      <button id="navHistory" class="nav-btn">History</button>
+      <button id="navProfile" class="nav-btn">Profile</button>
+      <button id="navAdmin"   class="nav-btn hidden">Admin Panel</button>
+    </div>
+
+    <div id="sidebarStatus" style="flex-direction:column;gap:8px;margin-bottom:12px;margin-top:12px;">
+      <hr class="divider" style="margin:0;">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="padding:10px 12px;background:#F0F2F5;border-radius:10px;border:1px solid #D5D9E0;">
+          <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Database</div>
+          <span id="fbStatus" class="badge badge-nosignal">Connecting…</span>
+        </div>
+        <div style="padding:10px 12px;background:#F0F2F5;border-radius:10px;border:1px solid #D5D9E0;">
+          <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Device</div>
+          <span id="deviceStatus" class="badge badge-nosignal">Waiting…</span>
+        </div>
+      </div>
+      <button id="logoutBtn" class="btn-signout">Sign Out</button>
+    </div>
+  </nav>
+
+  <main id="mainContent">
+
+    <!-- DASHBOARD -->
+    <section id="secDashboard">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <h1 class="section-title" style="margin-bottom:0;">Dashboard</h1>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span id="lastUpdatedLabel" style="font-size:12px;color:#9CA3AF;">Waiting for device…</span>
+          <span id="alertBadge" class="badge badge-nosignal">No Signal</span>
+          <button id="startReadingBtn" aria-label="Start health reading session">
+            <span id="startReadingIcon">&#9654;</span>
+            <span id="startReadingText">Start Reading</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="readingBanner">
+        <div class="reading-dot"></div>
+        <span>Reading in progress — sit properly and keep your finger on the sensor</span>
+      </div>
+
+      <!-- Overall Health Status Card -->
+      <div id="overallHealthCard" class="health-status-card health-status-neutral" style="margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Overall Health Status</div>
+            <div id="overallStatusText" style="font-size:22px;font-weight:700;color:#9CA3AF;line-height:1.1;">No Signal</div>
+            <div id="overallRecommendation" style="font-size:13px;color:#4B5563;margin-top:6px;max-width:420px;">Waiting for device readings…</div>
+            <span id="riskBadge" class="risk-badge risk-unknown">Risk: Unknown</span>
+          </div>
+          <div id="overallStatusIcon" style="font-size:28px;font-weight:800;color:#9CA3AF;min-width:56px;text-align:right;letter-spacing:-1px;">--</div>
+        </div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+
+        <!-- Heart Rate -->
+        <div class="metric-card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">Heart Rate</span>
+            <span style="font-size:10px;font-weight:700;color:#C0352A;background:rgba(192,53,42,0.08);padding:2px 7px;border-radius:4px;letter-spacing:0.04em;">HR</span>
+          </div>
+          <div class="metric-value" id="metricHR" style="color:#C0352A;">--</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:4px;">beats per minute</div>
+          <span id="interpHR" class="interp-tag interp-none">No reading</span>
+        </div>
+
+        <!-- SpO2 -->
+        <div class="metric-card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">SpO2</span>
+            <span style="font-size:10px;font-weight:700;color:#1B4F8A;background:rgba(27,79,138,0.08);padding:2px 7px;border-radius:4px;letter-spacing:0.04em;">SpO2</span>
+          </div>
+          <div class="metric-value" id="metricSpO2" style="color:#1B4F8A;">--</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:4px;">oxygen saturation %</div>
+          <span id="interpSpO2" class="interp-tag interp-none">No reading</span>
+        </div>
+
+        <!-- Temperature -->
+        <div class="metric-card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">Temperature</span>
+            <span style="font-size:10px;font-weight:700;color:#7A5C1E;background:rgba(122,92,30,0.08);padding:2px 7px;border-radius:4px;letter-spacing:0.04em;">°C</span>
+          </div>
+          <div class="metric-value" id="metricTemp" style="color:#7A5C1E;">--</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:4px;">skin surface °C</div>
+          <span id="interpTemp" class="interp-tag interp-none">No reading</span>
+        </div>
+
+      
+        <!-- Blood Pressure -->
+        <div class="metric-card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">Blood Pressure</span>
+            <span style="font-size:10px;font-weight:700;color:#922218;background:rgba(146,34,24,0.08);padding:2px 7px;border-radius:4px;letter-spacing:0.04em;">BP</span>
+          </div>
+          <div class="metric-value" id="metricBP" style="color:#922218;font-size:26px;">--/--</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:4px;">mmHg (systolic/diastolic)</div>
+          <span id="interpBP" class="interp-tag interp-none">No reading</span>
+        </div>
+
+      </div>
+
+      <!-- Device Info Bar — hidden for regular users, shown for admins only -->
+      <div id="deviceInfoBar" class="glass" style="display:none;padding:14px 18px;margin-bottom:20px;flex-wrap:wrap;gap:20px;align-items:center;">
+        <div>
+          <span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">WiFi</span>
+          <div id="wifiSsid" style="font-size:13px;color:#4B5563;font-weight:500;">--</div>
+        </div>
+        <div>
+          <span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">RSSI</span>
+          <div id="wifiRssi" style="font-size:13px;color:#4B5563;font-weight:500;">--</div>
+        </div>
+        <div>
+          <span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">Sensor Valid</span>
+          <div id="sensorValid" style="font-size:13px;color:#4B5563;font-weight:500;">--</div>
+        </div>
+        <div>
+          <span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">Last Update</span>
+          <div id="lastTs" style="font-size:13px;color:#4B5563;font-weight:500;">--</div>
+        </div>
+        <div>
+          <span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">Battery</span>
+          <div id="batteryLevel" style="font-size:13px;color:#4B5563;font-weight:500;">--</div>
+        </div>
+      </div>
+
+      <div id="sessionSummary" class="glass hidden" style="padding:18px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+          <span style="font-size:13px;font-weight:600;color:#1A1D21;">Latest Reading Session</span>
+          <span id="sessionRisk" class="risk-badge risk-unknown">Risk: Unknown</span>
+        </div>
+        <div id="sessionDetails" class="session-grid"></div>
+      </div>
+
+      <!-- Chart -->
+      <div class="glass" style="padding:20px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <span style="font-size:13px;font-weight:600;color:#1A1D21;">Real-time Readings</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button id="tabHR"   class="chart-tab active-hr"  data-metric="hr">Heart Rate</button>
+            <button id="tabSpo2" class="chart-tab"            data-metric="spo2">SpO2</button>
+            <button id="tabTemp" class="chart-tab"            data-metric="temp">Temp</button>
+            <button id="tabBP"   class="chart-tab"            data-metric="bp">BP</button>
+          </div>
+        </div>
+        <div id="chartContainer">
+          <canvas id="hrChart"></canvas>
+        </div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:8px;text-align:right;">Last 20 readings</div>
+      </div>
+
+      <!-- Recent Sensor Alerts -->
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <span style="font-size:13px;font-weight:600;color:#1A1D21;">Recent Sensor Alerts</span>
+          <span style="font-size:11px;color:#9CA3AF;">Health readings only</span>
+        </div>
+        <div id="recentAlerts">
+          <div style="text-align:center;padding:24px;color:#9CA3AF;font-size:13px;">
+            No alerts yet — waiting for data
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="secHistory" class="hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h1 class="section-title" style="margin-bottom:0;">Reading History</h1>
+          <span style="font-size:12px;color:#9CA3AF;">Your personal reading sessions</span>
+        </div>
+        <button id="exportCsvBtn" class="btn-cmd btn-cmd-wifi">Export CSV</button>
+      </div>
+      <div class="glass" style="padding:20px;">
+        <div id="historyTableWrap" style="overflow-x:auto;">
+          <div id="historyContent">
+            <div style="text-align:center;padding:40px;color:#9CA3AF;">
+              <div style="font-size:14px;font-weight:600;color:#4B5563;margin-bottom:6px;">No History Yet</div>
+              <div style="font-size:13px;">Previous readings will appear here once the device starts saving history.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="secProfile" class="hidden">
+      <h1 class="section-title">Profile</h1>
+      <div class="glass" style="padding:28px;max-width:480px;">
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div>
+            <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Full Name</div>
+            <div id="profName"  style="font-size:18px;font-weight:700;color:#1A1D21;">--</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Age</div>
+            <div id="profAge"   style="font-size:18px;font-weight:700;color:#1A1D21;">--</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Email</div>
+            <div id="profEmail" style="font-size:18px;font-weight:700;color:#1A1D21;">--</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="secAdmin" class="hidden">
+      <h1 class="section-title">Admin Panel</h1>
+
+      <div class="glass" style="padding:22px;margin-bottom:20px;">
+        <h2 style="font-size:14px;font-weight:700;color:#1A1D21;margin-bottom:16px;">Device Control — CHAIR_01</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+          <button id="cmdStart"      class="btn-cmd btn-cmd-start">Start</button>
+          <button id="cmdStop"       class="btn-cmd btn-cmd-stop">Stop</button>
+          <button id="cmdReset"      class="btn-cmd btn-cmd-reset">Reset</button>
+          <button id="cmdSwitchWifi" class="btn-cmd btn-cmd-wifi">Switch WiFi</button>
+        </div>
+        <div style="background:#F0F2F5;border-radius:10px;padding:14px;border:1px solid #D5D9E0;">
+          <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Device Config</div>
+          <pre id="deviceConfig" style="font-size:12px;color:#4B5563;white-space:pre-wrap;margin:0;font-family:monospace;">Loading…</pre>
+        </div>
+      </div>
+
+      <div class="glass" style="padding:22px;margin-bottom:20px;">
+        <h2 style="font-size:14px;font-weight:700;color:#1A1D21;margin-bottom:14px;">Pressure Calibration</h2>
+        <div class="calibration-grid">
+          <label>
+            <span>Zero ADC</span>
+            <input id="calZeroAdc" type="number" class="auth-input" min="0" max="4095" placeholder="410" />
+          </label>
+          <label>
+            <span>mmHg per ADC</span>
+            <input id="calScale" type="number" class="auth-input" min="0.01" max="2" step="0.01" placeholder="0.22" />
+          </label>
+          <label>
+            <span>Target ADC</span>
+            <input id="calTargetAdc" type="number" class="auth-input" min="0" max="4095" placeholder="1700" />
+          </label>
+          <label>
+            <span>Max ADC</span>
+            <input id="calMaxAdc" type="number" class="auth-input" min="0" max="4095" placeholder="2500" />
+          </label>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;">
+          <button id="saveCalibrationBtn" class="btn-cmd btn-cmd-start">Save Calibration</button>
+          <span id="calibrationMsg" style="font-size:12px;color:#9CA3AF;"></span>
+        </div>
+      </div>
+
+      <div class="glass" style="padding:22px;margin-bottom:20px;">
+        <h2 style="font-size:14px;font-weight:700;color:#1A1D21;margin-bottom:14px;">Latest User Readings</h2>
+        <div id="latestUserReadings" style="overflow-x:auto;">
+          <div style="font-size:13px;color:#9CA3AF;padding:8px;">Loading readings…</div>
+        </div>
+      </div>
+
+      <div class="glass" style="padding:22px;margin-bottom:20px;">
+        <h2 style="font-size:14px;font-weight:700;color:#1A1D21;margin-bottom:14px;">All Users</h2>
+        <div id="userList" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:#9CA3AF;">Loading users…</div>
+        </div>
+      </div>
+
+      <div class="glass" style="padding:22px;">
+        <h2 style="font-size:14px;font-weight:700;color:#1A1D21;margin-bottom:14px;">
+          Admin Logs
+          <span style="font-size:11px;color:#9CA3AF;font-weight:400;margin-left:8px;">(last 30, live)</span>
+        </h2>
+        <div id="adminLogs" style="max-height:280px;overflow-y:auto;border-radius:8px;background:#F0F2F5;border:1px solid #D5D9E0;">
+          <div style="padding:12px;font-size:12px;color:#9CA3AF;">Loading logs…</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

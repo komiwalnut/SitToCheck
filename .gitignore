@@ -1,0 +1,13 @@
+# Secrets — never commit real credentials (device keys, WiFi, Supabase keys)
+secrets.h
+**/secrets.h
+.env
+.env.local
+
+# Dependencies / build output
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
